@@ -1,0 +1,17 @@
+{% extends 'Blog/base.html' %}
+
+{% block title %}Вход{% endblock %}
+
+{% block content %}
+<h1>Страница кмментария</h1>
+<a href="{% url 'post' post_id=post.id %}">{{ post.name }}</a><br>
+
+<form method="post">
+    {% csrf_token %}
+    <label for="description">Комментарий:</label>
+    <input type="text" name="description" id="description">
+    <br>
+    <input type="submit" value="Добавить комментарий">
+</form>
+
+{% endblock %}

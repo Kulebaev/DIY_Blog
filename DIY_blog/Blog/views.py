@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from .models import UserProfile, UserPost
+from .models import UserProfile, UserPost, Comment
 from django.core.paginator import Paginator
 
 
@@ -91,7 +91,7 @@ def all_blogs(request):
 def profile_view(request, user_id):
 
     user_profile = UserProfile.objects.get(user_id=user_id) # Получаем Запись пользователя по его id
-    user_posts = UserPost.objects.filter(user=user_profile.user) # Получаем все посты этого пользователя 
+    user_posts = UserPost.objects.filter(user=user_profile.user).order_by('date') # Получаем все посты этого пользователя 
 
     paginator = Paginator(user_posts, 5)  # Разбиваем на страницы по 5 элементов
     page_number = request.GET.get('page')
@@ -104,7 +104,36 @@ def post_view(request, post_id):
 
     post = get_object_or_404(UserPost, id=post_id)
 
-    return render(request, 'Blog/post.html', {'post': post})
+    comments = Comment.objects.filter(post=post).order_by('date') # Получаем все комментарии и сортируем по дате
+    
+    paginator = Paginator(comments, 5)  # Разбиваем на страницы по 5 элементов
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'Blog/post.html', {'post': post, 'comments': page_obj})
+
+
+# Страница комментария
+def comment_view(request, post_id):
+
+    post = get_object_or_404(UserPost, id=post_id)
+
+    if request.method != "POST":
+        
+        return render(request, 'Blog/comment.html', {'post': post})
+
+    # Написать обработчик добавления комментария 
+
+    user = request.user.username
+    description = request.POST.get('description', '')
+    comment = Comment(
+            name=description[:20],
+            post=post,
+            user=request.user,
+            description=description,)
+    comment.save()
+
+    return redirect('post', post_id=post.id)
 
 
 # Все пользователи
