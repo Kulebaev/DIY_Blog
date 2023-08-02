@@ -1,0 +1,12 @@
+{% extends 'Blog/base.html' %} 
+{% load static %}
+{% load l10n %} 
+{% block title %}Главная страница{% endblock %} 
+{% block content %}
+    <h1>Страница всех блогеров</h1>
+    <ul>
+        {% for blogger in bloggers %}
+            <li>{{ blogger.user.username }}</li>         
+        {% endfor %}
+    </ul>
+{% endblock %}
