@@ -75,10 +75,10 @@ def register_view(request):
     return redirect('/')  # перенаправляем на главную страницу
 
 
-
+# Отображение страницы для всех блогов
 def all_blogs(request):
 
-    posts = UserPost.objects.all()
+    posts = UserPost.objects.all() # Получаем все записи из таблицы UserPost
     
     paginator = Paginator(posts, 5)  # Разбиваем на страницы по 5 элементов
     page_number = request.GET.get('page')
@@ -90,8 +90,8 @@ def all_blogs(request):
 # Профиль
 def profile_view(request, user_id):
 
-    user_profile = UserProfile.objects.get(user_id=user_id)
-    user_posts = UserPost.objects.filter(user=user_profile.user)
+    user_profile = UserProfile.objects.get(user_id=user_id) # Получаем Запись пользователя по его id
+    user_posts = UserPost.objects.filter(user=user_profile.user) # Получаем все посты этого пользователя 
 
     paginator = Paginator(user_posts, 5)  # Разбиваем на страницы по 5 элементов
     page_number = request.GET.get('page')
@@ -99,7 +99,7 @@ def profile_view(request, user_id):
 
     return render(request, 'Blog/profile.html', {'user_profile': user_profile, 'user_posts': page_posts})
 
-
+# Страница одного поста
 def post_view(request, post_id):
 
     post = get_object_or_404(UserPost, id=post_id)
@@ -110,7 +110,7 @@ def post_view(request, post_id):
 # Все пользователи
 def all_bloggers(request):
 
-    bloggers = UserProfile.objects.all()
+    bloggers = UserProfile.objects.all() # Получаем всех пользователей
     
     paginator = Paginator(bloggers, 5)  # Разбиваем на страницы по 5 элементов
     page_number = request.GET.get('page')
