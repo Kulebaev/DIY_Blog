@@ -4,9 +4,25 @@
 {% block title %}Главная страница{% endblock %} 
 {% block content %}
     <h1>Страница всех блогеров</h1>
-    <ul>
-        {% for blogger in bloggers %}
-            <li>{{ blogger.user.username }}</li>         
-        {% endfor %}
-    </ul>
+    {% for blogger in page_obj %}
+        <a href="{% url 'profile' user_id=blogger.user.id %}">{{ blogger.user.username }}</a><br>
+    {% endfor %}
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+            
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+            
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
 {% endblock %}
