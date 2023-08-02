@@ -1,0 +1,12 @@
+{% extends 'Blog/base.html' %}
+
+{% block title %}Вход{% endblock %}
+
+{% block content %}
+<h1>Страница поста</h1>
+<p>name: {{ post.name }}</p>
+<p>date: {{ post.date }}</p>
+<p>user: {{ post.user }}</p>
+<p>description: {{ post.description }}</p>
+
+{% endblock %}

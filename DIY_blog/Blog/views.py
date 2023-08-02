@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from .models import UserProfile
+from .models import UserProfile, UserPost
 from django.core.paginator import Paginator
 
 
@@ -37,6 +37,7 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('/login')  #Url login
+
 
 def register_view(request):
     if request.method != 'POST':
@@ -84,8 +85,20 @@ def all_blogs(request):
 def profile_view(request, user_id):
 
     user_profile = UserProfile.objects.get(user_id=user_id)
-    #blogs = blogs.filter(user_id=user_profile)
-    return render(request, 'Blog/profile.html', {'user_profile': user_profile})
+    user_posts = UserPost.objects.filter(user=user_profile.user)
+
+    paginator = Paginator(user_posts, 5)  # Разбиваем на страницы по 5 элементов
+    page_number = request.GET.get('page')
+    page_posts = paginator.get_page(page_number)
+
+    return render(request, 'Blog/profile.html', {'user_profile': user_profile, 'user_posts': page_posts})
+
+
+def post_view(request, post_id):
+
+    post = get_object_or_404(UserPost, id=post_id)
+
+    return render(request, 'Blog/post.html', {'post': post})
 
 
 # Все пользователи
