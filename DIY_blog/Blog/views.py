@@ -7,8 +7,13 @@ from django.core.paginator import Paginator
 
 #index_view главная страница
 def index_view(request):
+    posts = UserPost.objects.all() # Получаем все записи из таблицы UserPost
     
-    return render(request,"Blog/index.html")
+    paginator = Paginator(posts, 20)  # Разбиваем на страницы по 5 элементов
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'Blog/index.html', {'page_obj': page_obj})
 
 
 def login_view(request):
@@ -26,12 +31,10 @@ def login_view(request):
         # Если пользователь найден, выполняем вход
         login(request, user)
         return redirect('/')  # Перенаправляем пользователя на главную при успешной авторизации
-    else:
-        # Если пользователь не найден, выводим сообщение об ошибке
-        error_message = "Неправильный логин или пароль."
-        return render(request, 'Blog/login.html', {'error_message': error_message})
 
-    return render(request, 'Blog/login.html')
+    # Если пользователь не найден, выводим сообщение об ошибке
+    error_message = "Неправильный логин или пароль."
+    return render(request, 'Blog/login.html', {'error_message': error_message})
 
 
 def logout_view(request):
