@@ -78,7 +78,13 @@ def register_view(request):
 
 def all_blogs(request):
 
-    return render(request, 'Blog/all_blogs.html')
+    posts = UserPost.objects.all()
+    
+    paginator = Paginator(posts, 5)  # Разбиваем на страницы по 5 элементов
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'Blog/all_blogs.html', {'page_obj': page_obj})
 
 
 # Профиль
